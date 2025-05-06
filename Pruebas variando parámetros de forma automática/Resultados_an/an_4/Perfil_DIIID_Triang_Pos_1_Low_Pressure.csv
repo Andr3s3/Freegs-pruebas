@@ -1,0 +1,41 @@
+0,1,2
+PERFIL DE ARRANQUE,,
+Corriente,660000.0,Amps
+Radio Mayor,2,m
+Campo Toroidal,0.4,T
+Vacuum $F = RB_t$,0.8,
+FORMA DEL PLASMA,,
+Poloidal Beta,0.2999132331953916,
+Toroidal Beta,0.058245083838332705,
+Total Beta,0.04877304415646496,
+Normalized Beta,2.859304239257728,
+Elongation,2.044975422328177,
+Triangularity,0.42379056940963034,
+Intersect Walls,False,
+Plasma Aspect Ratio,3.1026093265196093,
+Inverse Plasma Aspect Ratio,0.32230935150374296,
+Minour Radius,0.48745205967598493,m
+Plasma Volume,12.684909265690974,m^2
+,,
+PARÁMETROS DEL PLASMA,,
+Plasma Current,659999.9999999999,Amps
+Plasma Pressure on Axis,57411.871614014606,Pascals
+Plasma Average Pressure,7382.949563471188,Pascals
+Plasma Thermal Energy,140478.06798870722,Joules
+am,2,
+an,4,
+L,2518838.730085815,
+Beta0,0.26824097989062107,
+,,
+Geometric Axis,"[array([ 1.51237331e+00, -3.72303616e-17])]","(R,Z)"
+Magnetic Axis,"(np.float64(1.57265625), np.float64(0.0), np.float64(0.25877608396509516))","(R,Z,psi)"
+Separatrix Boundary (Z=0.0),"(np.float64(1.0248555747731507), np.float64(1.9998459320602942))","(R,Z)"
+Shafranov Shift,"[array([6.02829434e-02, 3.72303616e-17])]","(R,Z)"
+,,
+FORMA DEL PLASMA,,
+"(RX,RZ)",1.3,1.0
+"(CIX,CIZ)",2.0,0.0
+"(CIX1,CIZ1)",1.76,0.66
+"(CIX2,CIZ2)",1.91,0.376
+"(CIX3,CIZ3)",1.3,0.0
+,,
