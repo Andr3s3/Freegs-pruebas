@@ -22,6 +22,10 @@ Plasma Current,460000.0,Amps
 Plasma Pressure on Axis,10572.38025547243,Pascals
 Plasma Average Pressure,2363.5228452138354,Pascals
 Plasma Thermal Energy,44430.365029734545,Joules
+am,2,
+an,2,
+L,1074486.8949928433,
+Beta0,0.1749108444207382,
 ,,
 Geometric Axis,"[array([1.52434126e+00, 2.77410149e-04])]","(R,Z)"
 Magnetic Axis,"(np.float64(1.5643988698226923), np.float64(0.00027741014881666414), np.float64(0.14452847158648713))","(R,Z,psi)"
