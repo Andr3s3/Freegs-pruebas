@@ -4,6 +4,8 @@ Editor de Spyder
 
 Este es un archivo temporal.
 """
+import matplotlib
+matplotlib.use("Agg")  
 import matplotlib.pyplot as plt 
 import numpy as np 
 import pandas as pd 
@@ -205,7 +207,8 @@ plt.show()
 
 
 
-# %% ##################################################### 
+# %% 
+##################################################### 
 # Final plot of equilibrium 
 axis = eq.plot(show=False) 
 eq.tokamak.plot(axis=axis, show=False) 
@@ -392,10 +395,17 @@ plt.show()
 # %% 
 ##################################################### 
 # Final plot of equilibrium 
-axis = eq.plot(show=False) 
+fig, axis = plt.subplots()
+axis = eq.plot(axis=axis, show=False) 
 eq.tokamak.plot(axis=axis, show=False) 
 constrain.plot(axis=axis, show=True) 
-plt.savefig(path_imagenes+'/Ch6_eq_'+nombre) 
+plt.legend(loc='upper left', bbox_to_anchor=(1, 1), borderaxespad=0.)  # Posiciona la leyenda fuera de los ejes
+
+plt.draw()
+plt.pause(0.1)
+plt.draw()
+plt.pause(0.1)  # Breve pausa para asegurar el renderizado
+plt.savefig(path_imagenes+'/Ch6_eq_'+nombre, bbox_inches='tight')
 
 # %% 
 ##################################################### 
