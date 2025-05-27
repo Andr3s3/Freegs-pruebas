@@ -39,16 +39,16 @@ eq = freegs.Equilibrium(tokamak=tokamak,
 # P = 1e6 
 # I = 1e6 
 # F = 2.0 
-R = 2 
+R = 0.9
 # P = 1.5e6 #
-beta = 0.3 # kPa 
+beta = 0.33 # poloidal #0.03 datos mostrados al Dr.
 # I = -1533632 
 # Límite 2.0 MA 
 #I = 700000 #0.7e6 
-I = float(os.environ.get("INTENSIDAD_I", 660000.0))  # Ahora `I` se toma de `variacion de arranque...`
-Bt = float(os.environ.get("CAMPO_BT", 0.4))  #Ahora Bt es dinámico
+I = float(os.environ.get("INTENSIDAD_I", 1533632))  # Ahora `I` se toma de `variacion de arranque...`
+Bt = float(os.environ.get("CAMPO_BT", 1.93))  #Ahora Bt es dinámico
 #Bt = 0.4 # Límite 2.2 T 
-an = int(os.environ.get("PARAM_AN", 2))  # Ahora an es dinámico
+an = int(os.environ.get("PARAM_AN", 1))  # Ahora an es dinámico
 #an = 2
 am = int(os.environ.get("PARAM_AM", 2))  # Ahora am es dinámico
 #am = 2
@@ -401,8 +401,6 @@ eq.tokamak.plot(axis=axis, show=False)
 constrain.plot(axis=axis, show=True) 
 plt.legend(loc='upper left', bbox_to_anchor=(1, 1), borderaxespad=0.)  # Posiciona la leyenda fuera de los ejes
 
-plt.draw()
-plt.pause(0.1)
 plt.draw()
 plt.pause(0.1)  # Breve pausa para asegurar el renderizado
 plt.savefig(path_imagenes+'/Ch6_eq_'+nombre, bbox_inches='tight')
