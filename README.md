@@ -8,6 +8,6 @@
 + Beta Poloidal $\beta_{p}$, Corriente del Plasma $I_{p}$, Campo Magnético Toroidal $B_{t}$.
 + Expresiones polinomiales para P y F. (no considerada en este trabajo).
 
-#### Se ha modificado el código de tal manera que sea posible realizar múltiples iteraciones sobre una lista de valores para algún parámetro de inicio dada una forma del plasma. Esto se muestra en la carpeta ```Variaciones```.
+#### Se ha modificado el código de tal manera que sea posible realizar múltiples iteraciones sobre una lista de valores para algún parámetro de inicio dada una forma del plasma. Esto se muestra en la carpeta ```Variable```.
 
 #### Para simulaciones individuales se ha dividido el script en 2 partes ```main.py``` y ```graph.py```, dónde el primero es el archivo de control y el segundo contiene las rutinas de graficación.
