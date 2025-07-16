@@ -2,7 +2,7 @@
 """
 Created on Fri Jul 11 18:54:40 2025
 
-@author: LENOVO
+@author: Uriel, Andr3s, Luis
 """
 import matplotlib
 matplotlib.use("Agg")
