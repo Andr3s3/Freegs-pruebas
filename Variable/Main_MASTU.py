@@ -124,11 +124,6 @@ freegs.solve(eq,          # The equilibrium to adjust
                  constrain,
                  show=True) 
 
-# Guardar perfiles del plasma en CSV
-guardar_perfiles(eq, profiles, RX, RZ, CIX, CIZ, CIX1, CIZ1, CIX2, CIZ2, CIX3, CIZ3, path_tablas, nombre1, P, I, R, Bt, F)
-
-# Obtener datos físicos del plasma
-jtor, pres, Ax = calcular_densidad_corriente(eq, profiles)
 #Coils Current for MASTU only
 
 # assign data
@@ -155,6 +150,12 @@ headC = ['Coil','Current','MA']
 #print(tabulate(Coils_Current,headers=headC,tablefmt="grid"))
 Coil = pd.DataFrame(Coils_Current)
 Coil.to_csv(path_tablas+'/Coil_Currents_'+nombre1, index=False)
+
+# Guardar perfiles del plasma en CSV
+guardar_perfiles(eq, profiles, RX, RZ, CIX, CIZ, CIX1, CIZ1, CIX2, CIZ2, CIX3, CIZ3, path_tablas, nombre1, P, I, R, Bt, F)
+
+# Obtener datos físicos del plasma
+jtor, pres, Ax = calcular_densidad_corriente(eq, profiles)
 
 graficar_densidad_corriente(eq, jtor, Ax, path_imagenes, nombre)
 graficar_factor_seguridad(eq, path_imagenes, nombre)
