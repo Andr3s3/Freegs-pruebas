@@ -14,15 +14,16 @@ import os
 
 # Save and change the name of the enviroment 
 
-def guardar_perfiles(eq, profiles, RX, RZ, CIX, CIZ, CIX1, CIZ1, CIX2, CIZ2, CIX3, CIZ3, path_tablas, nombre1):
+def guardar_perfiles(eq, profiles, RX, RZ, CIX, CIZ, CIX1, CIZ1, CIX2, CIZ2, CIX3, CIZ3, path_tablas, nombre1, P, I, R, Bt, F ):
     """Genera y guarda los parámetros del plasma en un archivo CSV."""
     
     perfil_data = [
         ["PERFIL DE ARRANQUE", "", ""],
-        ["Corriente", eq.plasmaCurrent(), "Amps"],
-        ["Radio Mayor", eq.geometricAxis()[0], "m"],
-        ["Campo Toroidal", eq.magneticAxis()[1], "T"],
-        [r'Vacuum $F = RB_t$', eq.geometricAxis()[0] * eq.magneticAxis()[1], ""],
+        ["Corriente", I, "Amps"],
+        ["Presión", P, "Pa"],
+        ["Radio menor", R, "m"],
+        ["Campo Toroidal", Bt , "T"],
+        [r'Vacuum $F = RB_t$', F, ""],
         ["FORMA DEL PLASMA", "", ""],
         ["Poloidal Beta", eq.poloidalBeta(), ""],
         ["Toroidal Beta", eq.toroidalBeta(), ""],
@@ -87,17 +88,30 @@ def graficar_densidad_corriente(eq, jtor, Ax, path_imagenes, nombre):
     plt.close()
 
 def graficar_factor_seguridad(eq, path_imagenes, nombre):
+    
+    # Obtener datos (psi_n, q)
+    psi_n, q = eq.q()
+    
     """Genera y guarda la gráfica del factor de seguridad."""
     plt.figure('Safety Factor', figsize=(6, 5), dpi=120)
-    plt.plot(*eq.q())
+    plt.plot(psi_n,q)
     plt.title('Safety Factor')
     plt.xlabel(r"Normalised $\psi$")
     plt.ylabel("Safety factor")
     plt.grid()
-    plt.savefig(os.path.join(path_imagenes, f'Ch6_q_{nombre}.png'))
+    ruta_imagen = os.path.join(path_imagenes, f'q_{nombre}.png')
+    plt.savefig(ruta_imagen)
     plt.close()
 
+    df = pd.DataFrame({
+        "psi_normalizado": psi_n,
+        "q": q
+    })
+    ruta_csv = os.path.join(path_imagenes, f'q_{nombre}.csv')
+    df.to_csv(ruta_csv, index=False)
 
+    print(f"✅ Imagen guardada en: {ruta_imagen}")
+    print(f"✅ CSV guardado en: {ruta_csv}")
 
 # %% 
 ##################################################### 
@@ -111,35 +125,6 @@ def graficar_equilibrio(eq, constrain, path_imagenes, nombre):
     plt.savefig(os.path.join(path_imagenes, f'Ch6_eq_{nombre}.png'))
     plt.close()
 
-def guardar_corriente_bobinas(eq, path_tablas, nombre1):
-    """Guarda la corriente de las bobinas en un CSV."""
-    Coils_Current = [ 
-        ["FC1", eq.tokamak["FC1"].current/1e+6, 'MA'], 
-        ["FC2", eq.tokamak["FC2"].current/1e+6, 'MA'], 
-        ["FC3", eq.tokamak["FC3"].current/1e+6, 'MA'], 
-        ["FC4", eq.tokamak["FC4"].current/1e+6, 'MA'], 
-        ["FC5", eq.tokamak["FC5"].current/1e+6, 'MA'], 
-        ["FC6", eq.tokamak["FC6"].current/1e+6, 'MA'], 
-        ["FC7", eq.tokamak["FC7"].current/1e+6, 'MA'], 
-        ["FC8", eq.tokamak["FC8"].current/1e+6, 'MA'], 
-        ["FC9", eq.tokamak["FC9"].current/1e+6, 'MA'], 
-        ["FC10", eq.tokamak["FC10"].current/1e+6, 'MA'], 
-        ["FC11", eq.tokamak["FC11"].current/1e+6, 'MA'], 
-        ["FC12", eq.tokamak["FC12"].current/1e+6, 'MA'], 
-        ["FC13", eq.tokamak["FC13"].current/1e+6, 'MA'], 
-        ["FC14", eq.tokamak["FC14"].current/1e+6, 'MA'], 
-        ["FC15", eq.tokamak["FC15"].current/1e+6, 'MA'], 
-        ["FC16", eq.tokamak["FC16"].current/1e+6, 'MA'], 
-        ["FC17", eq.tokamak["FC17"].current/1e+6, 'MA'], 
-        ["FC18", eq.tokamak["FC18"].current/1e+6, 'MA'] 
-
-    ] 
-    #Coils_Current = [[f"FC{i+1}", eq.tokamak[f"FC{i+1}"].current / 1e+6, 'MA'] for i in range(18)]
-    
-    df = pd.DataFrame(Coils_Current, columns=["Coil", "Current", "MA"])
-    os.makedirs(path_tablas, exist_ok=True)
-    df.to_csv(os.path.join(path_tablas, f'Coil_Currents_{nombre1}.csv'), index=False)
-    print(f"Corrientes guardadas en {path_tablas}/Coil_Currents_{nombre1}.csv")
 
 def graficar_energia_termica(eq, path_imagenes, nombre):
     """Genera la gráfica de la energía térmica del plasma si el valor es válido."""
@@ -152,7 +137,7 @@ def graficar_energia_termica(eq, path_imagenes, nombre):
             plt.figure(figsize=(6, 5), dpi=120)
             plt.plot([0, 1], [0, W], label=f"Energía Térmica: {W:.2f} J")
             plt.title("Energía Térmica del Plasma")
-            plt.xlabel("vs algo a escoger, ej presión")
+            plt.xlabel("Tiempo")
             plt.ylabel("Energía Térmica (Joules)")
             plt.grid()
             plt.legend()
@@ -355,46 +340,40 @@ def graficar_separatrix(eq, path_imagenes, nombre):
 
     print(f"Gráfica de la separatrix guardada en {path_imagenes}")
 
+#%% 
+#Mapas de calor
+def graficar_mapa_presion(eq, pres, path_imagenes, nombre="presion"):
+    """Genera y guarda un mapa 2D de la presión del plasma."""
+    R2D = eq.R
+    Z2D = eq.Z
 
+    plt.figure(figsize=(6, 5), dpi=120)
+    cp = plt.contourf(R2D, Z2D, pres, levels=100, cmap="inferno")
+    plt.colorbar(cp, label='Presión [Pa]')
+    plt.contour(R2D, Z2D, eq.psi(), levels=[eq.psi_bndry], colors='cyan', linewidths=1.5, linestyles='--', label='Separatriz')
+    plt.title("Mapa de Presión del Plasma")
+    plt.xlabel("R [m]")
+    plt.ylabel("Z [m]")
+    plt.grid(True)
+    plt.axis("equal")
+    
+    plt.savefig(os.path.join(path_imagenes, f"mapa_presion_{nombre}.png"))
+    plt.close()
+#%%
+def graficar_mapa_corriente(eq, jtor, path_imagenes, nombre="corriente"):
+    """Genera y guarda un mapa 2D de la densidad de corriente toroidal."""
+    R2D = eq.R
+    Z2D = eq.Z
 
-# %%
-# Coils Current for MASTU only
+    plt.figure(figsize=(6, 5), dpi=120)
+    cp = plt.contourf(R2D, Z2D, jtor, levels=100, cmap="viridis")
+    plt.colorbar(cp, label='Densidad de Corriente $J_\\phi$ [A/m²]')
+    plt.contour(R2D, Z2D, eq.psi(), levels=[eq.psi_bndry], colors='white', linewidths=1.5, linestyles='--')
+    plt.title("Mapa de Densidad de Corriente Toroidal")
+    plt.xlabel("R [m]")
+    plt.ylabel("Z [m]")
+    plt.grid(True)
+    plt.axis("equal")
+    plt.savefig(os.path.join(path_imagenes, f"mapa_corriente_{nombre}.png"))
+    plt.close()
 
-# assign data
-def guardar_corriente_bobinas2(eq, path_tablas, nombre1):
-    """Genera y guarda un CSV con la corriente de las bobinas del tokamak."""
-    
-    # Crear la lista de datos de las bobinas
-    Current = [ 
-        ["FC1", eq.tokamak["FC1"].current/1e+6, 'MA'], 
-        ["FC2", eq.tokamak["FC2"].current/1e+6, 'MA'], 
-        ["FC3", eq.tokamak["FC3"].current/1e+6, 'MA'], 
-        ["FC4", eq.tokamak["FC4"].current/1e+6, 'MA'], 
-        ["FC5", eq.tokamak["FC5"].current/1e+6, 'MA'], 
-        ["FC6", eq.tokamak["FC6"].current/1e+6, 'MA'], 
-        ["FC7", eq.tokamak["FC7"].current/1e+6, 'MA'], 
-        ["FC8", eq.tokamak["FC8"].current/1e+6, 'MA'], 
-        ["FC9", eq.tokamak["FC9"].current/1e+6, 'MA'], 
-        ["FC10", eq.tokamak["FC10"].current/1e+6, 'MA'], 
-        ["FC11", eq.tokamak["FC11"].current/1e+6, 'MA'], 
-        ["FC12", eq.tokamak["FC12"].current/1e+6, 'MA'], 
-        ["FC13", eq.tokamak["FC13"].current/1e+6, 'MA'], 
-        ["FC14", eq.tokamak["FC14"].current/1e+6, 'MA'], 
-        ["FC15", eq.tokamak["FC15"].current/1e+6, 'MA'], 
-        ["FC16", eq.tokamak["FC16"].current/1e+6, 'MA'], 
-        ["FC17", eq.tokamak["FC17"].current/1e+6, 'MA'], 
-        ["FC18", eq.tokamak["FC18"].current/1e+6, 'MA'] 
-    ] 
-
-    #Coils_Current = [[f"FC{i+1}", eq.tokamak[f"FC{i+1}"].current / 1e+6, 'MA'] for i in range(18)]
-    
-    # Convertir a DataFrame
-    df = pd.DataFrame(Current, columns=["Coil", "Current", "MA"])
-    
-    # Asegurar que la carpeta de tablas existe
-    os.makedirs(path_tablas, exist_ok=True)
-    
-    # Guardar el archivo CSV
-    df.to_csv(os.path.join(path_tablas, f'Coil_Currents_{nombre1}.csv'), index=False)
-    
-    print(f"Corrientes de bobinas guardadas en {path_tablas}/Coil_Currents_{nombre1}.csv")
