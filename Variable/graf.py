@@ -22,7 +22,7 @@ def guardar_perfiles(eq, profiles, RX, RZ, CIX, CIZ, CIX1, CIZ1, CIX2, CIZ2, CIX
         ["Corriente", I, "Amps"],
         ["Presión", P, "Pa"],
         ["Radio menor", R, "m"],
-        ["Campo Toroidal", Bt , "T"],
+        ["Campo Toroidal", Bt, "T"],
         [r'Vacuum $F = RB_t$', F, ""],
         ["FORMA DEL PLASMA", "", ""],
         ["Poloidal Beta", eq.poloidalBeta(), ""],
