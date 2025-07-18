@@ -54,7 +54,7 @@ P = float(os.environ.get("PRESIÓN_P", 1.5e5))
 #I = 0.9e6 
 R = 0.9
 # P = 1.5e6 #
-beta = 0.33 # poloidal #0.03 datos mostrados al Dr.
+beta = float(os.environ.get("PARAM_BETA",0.33)) # poloidal #0.03 datos mostrados al Dr.
 # I = -1533632 
 # Límite 2.0 MA 
 #I = 700000 #0.7e6 
