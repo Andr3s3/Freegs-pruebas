@@ -9,7 +9,8 @@ import subprocess
 import os
 import numpy as np
 
-Bt_values = np.arange(0.1, 2.1, 0.1)  # Bt desde 0.1 T hasta 2.0 T con pasos de 0.1 T
+# Bt desde 0.1 T hasta 2.0 T con pasos de 0.1 T
+Bt_values = np.arange(0.1, 2.1, 0.1)  
 
 path_resultados = "./Resultados_Bt"
 if not os.path.exists(path_resultados):
@@ -26,7 +27,8 @@ for Bt in Bt_values:
     os.environ["RESULTADOS_PATH"] = carpeta_resultados
     os.environ["CAMPO_BT"] = str(Bt)
 
-    resultado = subprocess.run(["python", "/home/andr3s/Documentos/SS/DIIID 2.py"], capture_output=True, text=True)
+#Escribir el path donde se encuentra el main correspondiente
+    resultado = subprocess.run(["python", "ESCRIBIR DIRECTORIO/Main DIIID.py"], capture_output=True, text=True)
     print(resultado.stdout)
 
 print("Simulación completada para variaciones de Bt.")

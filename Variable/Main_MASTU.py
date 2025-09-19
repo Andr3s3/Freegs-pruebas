@@ -33,72 +33,51 @@ if not os.path.exists(path_resultados):
 path_tablas = path_resultados  
 path_imagenes = path_resultados  
 
-
-# Save and change the name of the enviroment 
-
 ######################################### 
-# Create the machine, which specifies coil locations 
-# and equilibrium, specifying the domain to solve over 
+# Crea una máquina específica (MAST-U)
+# Define el dominio para solucionar el equilibrio 
 tokamak = freegs.machine.MASTU() 
 eq = freegs.Equilibrium(tokamak=tokamak,
-                            Rmin=0.1, Rmax=2.3,    # Radial domain
-                            Zmin=-2.5, Zmax=2.5,   # Height range
-                            nx=129, ny=129,          # Number of grid points
-                            boundary=freegs.boundary.freeBoundaryHagenow)  # Boundary condition
+                            Rmin=0.1, Rmax=2.3,    # Dominio radial
+                            Zmin=-2.5, Zmax=2.5,   # Altura
+                            nx=129, ny=129,        # Número de puntos en la malla
+                            boundary=freegs.boundary.freeBoundaryHagenow)  # Condiciones de frontera libre
 
 #########################################
-# Plasma profiles
-##########
-# Plasma profiles 
-P = float(os.environ.get("PRESIÓN_P", 1.5e5)) 
-#I = 0.9e6 
+
+# Perfil de arranque 
+P = float(os.environ.get("PRESIÓN_P", 1.5e5))  
 R = 0.9
-# P = 1.5e6 #
-beta = float(os.environ.get("PARAM_BETA",0.33)) # poloidal #0.03 datos mostrados al Dr.
-# I = -1533632 
-# Límite 2.0 MA 
-#I = 700000 #0.7e6 
-I = float(os.environ.get("INTENSIDAD_I", 0.9e6))  # Ahora `I` se toma de `variacion de arranque...`
-Bt = float(os.environ.get("CAMPO_BT", 0.85))  #Ahora Bt es dinámico
-an = int(os.environ.get("PARAM_AN", 1))  # Ahora an es dinámico
-am = int(os.environ.get("PARAM_AM", 2))  # Ahora am es dinámico
+beta = float(os.environ.get("PARAM_BETA",0.33))  # beta poloidal
+I = float(os.environ.get("INTENSIDAD_I", 0.9e6)) #`I` puede variar desde `variacion de arranque...`
+Bt = float(os.environ.get("CAMPO_BT", 0.85))     #Bt puede ser usado de forma dinámica
+an = int(os.environ.get("PARAM_AN", 1))          #an es dinámico, modifica el perfil de densidad de corriente
+am = int(os.environ.get("PARAM_AM", 2))          #am es dinámico, modifica el perfil de densidad de corriente
 F = R*Bt # uviera
 
 profiles = freegs.jtor.ConstrainPaxisIp(eq,
-                                            P, # Plasma pressure on axis [Pascals]
-                                            I, # Plasma current [Amps]
-                                            F,
+                                            P, # Presión del plasma en el eje magnético [Pascals]
+                                            I, # Corriente del plasma [Amps]
+                                            F, # Vacio f=R*Bt
                                             am,
                                             an
-                                            )  # Vacuum f=R*Bt
+                                            )  
 ########################################
 
 ######################################## '''
-# Create the folders with the enviroment name 
-N = "Triang_Pos_1_Low_Pressure" 
-# N = "Snowflake_1_1" 
+# Crea carpetas con el nombre del entorno
+# Modificar N, permite tener orden y control sobre los datos obtenidos
+N = "Triang_Pos_1_Low_Pressure"  
 
 nombre = "MASTU_"+N+".png" 
 nombre1 = "MASTU_"+N+".csv" 
 nombre2 = "MASTU_"+N 
 
-'''
-path_tablas = './Tablas_'+nombre2 
-if not os.path.exists(path_tablas): 
-    os.mkdir(path_tablas) 
-    
-path_imagenes = './Imagenes_'+nombre2 
-if not os.path.exists(path_imagenes): 
-    os.mkdir(path_imagenes)
-'''
-
-    
-
-    # Plasma Contrains
+# Constricciones del plasma
 
 RX = 0.62
 RZ = 1.02
-xpoints = [(RX, -RZ),   # (R,Z) locations of X-points
+xpoints = [(RX, -RZ),   # (R,Z) Ubicación de los puntos x, donde el campo magnético total es cero
                (RX, RZ)]
 
 
@@ -106,27 +85,23 @@ CIX = 1.25; CIZ = 0.0
 CIX1 = 0.83; CIZ1 = 0.84
 CIX2 = 1.11; CIZ2 = 0.5
 CIX3 = RX ; CIZ3 = 0.0 
-#'''
 
+#Condiciones de isoflujo que definen la separatríz
 #isoflux = [(RX,-RZ, RX,RZ), (RX,-RZ,CIX,-CIZ), (RX,RZ,CIX,CIZ)]
 #isoflux = [(RX,-RZ, RX,RZ), (RX,-RZ,CIX1,-CIZ1), (RX,RZ,CIX1,CIZ1), (CIX1,-CIZ1,CIX,CIZ), (CIX1,CIZ1,CIX,CIZ)]
 isoflux = [(RX,-RZ, RX,RZ), (RX,-RZ,CIX1,-CIZ1), (RX,RZ,CIX1,CIZ1), (CIX1,-CIZ1,CIX2,-CIZ2), (CIX1,CIZ1,CIX2,CIZ2), (CIX2,CIZ2,CIX,CIZ), (CIX2,-CIZ2,CIX,CIZ)]
-#isoflux = [(RX,RZ, CIX3,CIZ3),(CIX3, CIZ3, RX,-RZ) ,(RX,-RZ,CIX1,-CIZ1), (RX,RZ,CIX1,CIZ1), (CIX1,-CIZ1,CIX2,-CIZ2), (CIX1,CIZ1,CIX2,CIZ2), (CIX2,CIZ2,CIX,CIZ), (CIX2,-CIZ2,CIX,CIZ)]
-
+#se pueden escoger los puntos dependiendo de la forma y triangularidad que se desee en la separatriz
 
 constrain = freegs.control.constrain(xpoints=xpoints, isoflux=isoflux)
 constrain(eq)
 
-#%matplotlib qt
-#%matplotlib inline
-freegs.solve(eq,          # The equilibrium to adjust
-                 profiles,    # The toroidal current profile function
+
+freegs.solve(eq,              #Solucionador de equilibrio
+                 profiles,    #Función que genera los perfiles
                  constrain,
                  show=True) 
 
-#Coils Current for MASTU only
-
-# assign data
+#Corrientes en las bobinas específicamente de MAST-U
 Coils_Current = [
     ["Solenoid", eq.tokamak["Solenoid"].current/1e+6,''],
     ["Pc", eq.tokamak["Pc"].current/1e+6,'MA'],
@@ -143,18 +118,16 @@ Coils_Current = [
     ["P6", eq.tokamak["P6"].current/1e+6,'MA']
 ]
  
-# create header
 headC = ['Coil','Current','MA']
 
-# display table
-#print(tabulate(Coils_Current,headers=headC,tablefmt="grid"))
+#Tabulador de corrientes
 Coil = pd.DataFrame(Coils_Current)
 Coil.to_csv(path_tablas+'/Coil_Currents_'+nombre1, index=False)
 
-# Guardar perfiles del plasma en CSV
+#Perfiles del plasma en CSV
 guardar_perfiles(eq, profiles, RX, RZ, CIX, CIZ, CIX1, CIZ1, CIX2, CIZ2, CIX3, CIZ3, path_tablas, nombre1, P, I, R, Bt, F)
 
-# Obtener datos físicos del plasma
+#Datos físicos del plasma con rutinas de graf.py
 jtor, pres, Ax = calcular_densidad_corriente(eq, profiles)
 
 graficar_densidad_corriente(eq, jtor, Ax, path_imagenes, nombre)

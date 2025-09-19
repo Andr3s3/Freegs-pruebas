@@ -36,44 +36,36 @@ path_imagenes = path_resultados
 
 
 ######################################### 
-# Create the machine, which specifies coil locations 
-# and equilibrium, specifying the domain to solve over 
+# Crea una máquina específica (DIII-D)
+# Define el dominio para solucionar el equilibrio 
 tokamak = freegs.machine.DIIID() 
 eq = freegs.Equilibrium(tokamak=tokamak, 
-                        Rmin=0.1, Rmax=3.0, # Radial domain 
-                        Zmin=-1.8, Zmax=1.8, # Height range 
-                        nx=129, ny=129, # Number of grid points b
-                        boundary=freegs.boundary.freeBoundaryHagenow) # Boundary condition 
+                        Rmin=0.1, Rmax=3.0,  # Dominio radial 
+                        Zmin=-1.8, Zmax=1.8, # Altura 
+                        nx=129, ny=129,      # Número de puntos en la malla
+                        boundary=freegs.boundary.freeBoundaryHagenow) # Condiciones de frontera 
 
 ######################################### 
-# Plasma profiles 
+# Perfil de arranque  
 P = float(os.environ.get("PRESIÓN_P",1e6)) 
-# I = 1e6 
-# F = 2.0 
 R = 0.9
-# P = 1.5e6 #
-beta = float(os.environ.get("PARAM_BETA",0.33)) # poloidal #0.03 datos mostrados al Dr.
-# I = -1533632 
-# Límite 2.0 MA 
-#I = 700000 #0.7e6 
-I = float(os.environ.get("INTENSIDAD_I", 1533632))  # Ahora `I` se toma de `variacion de arranque...`
-Bt = float(os.environ.get("CAMPO_BT", 1.93))  #Ahora Bt es dinámico
-#Bt = 0.4 # Límite 2.2 T 
-an = int(os.environ.get("PARAM_AN", 1))  # Ahora an es dinámico
-#an = 2
-am = int(os.environ.get("PARAM_AM", 2))  # Ahora am es dinámico
-#am = 2
+beta = float(os.environ.get("PARAM_BETA",0.33))     #Beta poloidal 
+I = float(os.environ.get("INTENSIDAD_I", 1533632))  # `I` puede variar desde `variacion de arranque...`
+Bt = float(os.environ.get("CAMPO_BT", 1.93))        #Bt puede ser usado de forma dinámica
+an = int(os.environ.get("PARAM_AN", 1))   # an es dinámico, modifica el perfil de densidad de corriente
+am = int(os.environ.get("PARAM_AM", 2))   # am es dinámico, modifica el perfil de densidad de corriente
 F = R*Bt 
 profiles = freegs.jtor.ConstrainBetapIp(eq, 
-                                        beta, # Plasma pressure on axis [Pascals] 
-                                        I, # Plasma current [Amps] 
-                                        F, 
+                                        beta, # Presión del plasma en el eje magnético [Pascals] 
+                                        I,    # Corriente del plasma [Amps] 
+                                        F,    # Vacio f=R*Bt
                                         am, 
                                         an
-                                        ) # Vacuum f=R*Bt 
+                                        ) 
 
-######################################## '''
-# Create the folders with the enviroment name 
+######################################## 
+# Crea carpetas con el nombre del entorno
+# Modificar N, permite tener orden y control sobre los datos obtenidos
 N = "Triang_Pos_1_Low_Pressure" 
 # N = "Snowflake_1_1" 
 
@@ -81,19 +73,10 @@ nombre = "DIIID_"+N+".png"
 nombre1 = "DIIID_"+N+".csv" 
 nombre2 = "DIIID_"+N 
 
-'''
-path_tablas = './Tablas_'+nombre2 
-if not os.path.exists(path_tablas): 
-    os.mkdir(path_tablas) 
-    
-path_imagenes = './Imagenes_'+nombre2 
-if not os.path.exists(path_imagenes): 
-    os.mkdir(path_imagenes) 
-'''
-# Plasma Contrains 
+# Constricciones del plasma 
 RX = 1.30 
 RZ = 1.0 
-xpoints = [(RX, -RZ), # (R,Z) locations of X-points 
+xpoints = [(RX, -RZ), # Ubicación de los puntos x, donde el campo magnético total es cero
            (RX, RZ)] 
 CIX = 2.00 
 CIZ = 0.0 
@@ -104,25 +87,22 @@ CIZ2 = 0.376
 CIX3 = RX 
 CIZ3 = 0.0 
 
+#Condiciones de isoflujo que definen la separatríz
 # isoflux = [(RX,-RZ, RX,RZ), (RX,-RZ,CIX,-CIZ), (RX,RZ,CIX,CIZ)]
 isoflux = [(RX, -RZ, RX, RZ), (RX, -RZ, CIX1, -CIZ1), (RX, RZ, CIX1,
                                                        CIZ1), (CIX1, -CIZ1, CIX, CIZ), (CIX1, CIZ1, CIX, CIZ)]
 # isoflux = [(RX,-RZ, RX,RZ), (RX,-RZ,CIX1,-CIZ1), (RX,RZ,CIX1,CIZ1), (CIX1,-CIZ1,CIX2,-CIZ2), (CIX1,CIZ1,CIX2,CIZ2), (CIX2,CIZ2,CIX,CIZ), (CIX2,-CIZ2,CIX,CIZ)]
 # isoflux = [(RX,RZ, CIX3,CIZ3),(CIX3, CIZ3, RX,-RZ) ,(RX,-RZ,CIX1,-CIZ1), (RX,RZ,CIX1,CIZ1), (CIX1,-CIZ1,CIX2,-CIZ2), (CIX1,CIZ1,CIX2,CIZ2), (CIX2,CIZ2,CIX,CIZ), (CIX2,-CIZ2,CIX,CIZ)]
-
+#se pueden escoger los puntos dependiendo de la forma y triangularidad que se desee en la separatriz
 constrain = freegs.control.constrain(xpoints=xpoints, isoflux=isoflux) 
 constrain(eq) 
-
-# %matplotlib qt 
-# %matplotlib inline 
-freegs.solve(eq, # The equilibrium to adjust 
-             profiles, # The toroidal current profile function 
+ 
+freegs.solve(eq,         #Solucionador de equilibrio 
+             profiles,   #Función que genera los perfiles 
              constrain, 
              show=True) 
 
-# %%Corrientes de Bobinas 
-
-# assign data 
+#Corrientes en las bobinas específicamente de DIII-D
 Coils_Current = [ 
     ["FC1", eq.tokamak["FC1"].current/1e+6, 'MA'], 
     ["FC2", eq.tokamak["FC2"].current/1e+6, 'MA'], 
@@ -144,22 +124,18 @@ Coils_Current = [
     ["FC18", eq.tokamak["FC18"].current/1e+6, 'MA'] 
 
 ] 
-
-# create header 
 headC = ['Coil', 'Current', 'MA'] 
 
-# display table 
-# print(tabulate(Coils_Current,headers=headC,tablefmt="grid")) 
+#Tabulador de corrientes 
 Coil = pd.DataFrame(Coils_Current) 
 Coil.to_csv(path_tablas+'/Coil_Currents_'+nombre1, index=False) 
 
-# Guardar perfiles del plasma en CSV
+#Perfiles del plasma en CSV
 guardar_perfiles(eq, profiles, RX, RZ, CIX, CIZ, CIX1, CIZ1, CIX2, CIZ2, CIX3, CIZ3, path_tablas, nombre1, P,  I, R, Bt, F)
 
-# Obtener datos físicos del plasma
+#Datos físicos del plasma con rutinas de graf.py
 jtor, pres, Ax = calcular_densidad_corriente(eq, profiles)
 
-# Generar y guardar las gráficas
 graficar_densidad_corriente(eq, jtor, Ax, path_imagenes, nombre)
 graficar_factor_seguridad(eq, path_imagenes, nombre)
 graficar_equilibrio_final(eq, constrain, path_imagenes, nombre)

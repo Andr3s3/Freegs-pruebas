@@ -15,7 +15,7 @@ import os
 # Save and change the name of the enviroment 
 
 def guardar_perfiles(eq, profiles, RX, RZ, CIX, CIZ, CIX1, CIZ1, CIX2, CIZ2, CIX3, CIZ3, path_tablas, nombre1, P, I, R, Bt, F ):
-    """Genera y guarda los parámetros del plasma en un archivo CSV."""
+    "Genera y guarda los parámetros del plasma en CSV."
     
     perfil_data = [
         ["PERFIL DE ARRANQUE", "", ""],
@@ -67,7 +67,7 @@ def guardar_perfiles(eq, profiles, RX, RZ, CIX, CIZ, CIX1, CIZ1, CIX2, CIZ2, CIX
     print(f"Perfil guardado en {path_tablas}/Perfil_{nombre1}.csv")
 
 ######################################################## 
-# Toroidal Current And Pressure 
+# Corriente toroidal y presión
 def calcular_densidad_corriente(eq, profiles):
     """Calcula la densidad de corriente y presión del plasma."""
     jtor = profiles.Jtor(eq.R, eq.Z, eq.psi(), eq.psi_bndry)
@@ -115,7 +115,6 @@ def graficar_factor_seguridad(eq, path_imagenes, nombre):
 
 # %% 
 ##################################################### 
-# Final plot of equilibrium 
 
 def graficar_equilibrio(eq, constrain, path_imagenes, nombre):
     """Genera y guarda la gráfica del equilibrio del plasma."""
@@ -176,7 +175,7 @@ def graficar_presion_corriente(eq, pres, jtor, Ax, path_imagenes, nombre):
 
 # %% 
 ####################################################### 
-# Tokamak Magnetic Field, Toroidal and Poloidal Magnetic Field 
+# Campos magnéticos totales, poloidal y toroidal 
 def graficar_campo_magnetico(eq, Ax, path_imagenes, nombre):
     """Genera y guarda las gráficas del campo magnético del tokamak."""
     
@@ -224,7 +223,7 @@ def graficar_campo_magnetico(eq, Ax, path_imagenes, nombre):
     print(f"Gráficas del campo magnético guardadas en {path_imagenes}")
 # %% 
 ###################################################### 
-# Tokamak Magnetic Field and Total Magnetic Field 
+# campo magnético total
 def graficar_campo_magnetico_total(eq, Ax, path_imagenes, nombre):
     """Genera y guarda las gráficas de los campos magnéticos poloidal, toroidal y del plasma."""
     
@@ -272,30 +271,10 @@ def graficar_campo_magnetico_total(eq, Ax, path_imagenes, nombre):
 
     print(f"Gráficas del campo magnético total guardadas en {path_imagenes}")
 
-# %% 
-# ''' 
-###################################################### 
-
-'''
-# Safety Factor 
-print("\nSafety factor:\n\tpsi \t q") 
-for psi in [0.01, 0.5, 0.9, 0.95]: 
-    print("\t{:.2f}\t{:.2f}".format(psi, eq.q(psi))) 
-  
-
-# Safety factor plt.figure('Safety Factor', figsize=(6, 5), dpi=120) 
-plt.plot(*eq.q()) 
-plt.title('Safety Factor') 
-plt.xlabel(r"Normalised $\psi$") 
-plt.ylabel("Safety factor") 
-plt.grid() 
-plt.savefig(path_imagenes+'/Ch6_q_'+nombre) 
-plt.show() 
-'''
 
 # %% 
 ##################################################### 
-# Final plot of equilibrium 
+# Ploteo final
 def graficar_equilibrio_final(eq, constrain, path_imagenes, nombre):
     """Genera y guarda la gráfica final del equilibrio del plasma."""
     
@@ -318,7 +297,7 @@ def graficar_equilibrio_final(eq, constrain, path_imagenes, nombre):
 
 # %% 
 ##################################################### 
-# Separatrix 
+# Separatríz
 
 def graficar_separatrix(eq, path_imagenes, nombre):
     """Genera y guarda la gráfica de la separatrix del plasma."""

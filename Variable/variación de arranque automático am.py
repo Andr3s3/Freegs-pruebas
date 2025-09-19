@@ -8,7 +8,8 @@ Created on Tue May  6 07:32:44 2025
 import subprocess
 import os
 
-am_values = range(1, 11, 1)  # am desde 1 hasta 10 en pasos de 1
+# am desde 1 hasta 10 en pasos de 1
+am_values = range(1, 11, 1)  
 
 path_resultados = "./Resultados_am"
 if not os.path.exists(path_resultados):
@@ -24,8 +25,9 @@ for am in am_values:
 
     os.environ["RESULTADOS_PATH"] = carpeta_resultados
     os.environ["PARAM_AM"] = str(am)
-
-    resultado = subprocess.run(["python", "/home/andr3s/Documentos/SS/main.py"], capture_output=True, text=True)
+    
+#Escribir el path donde se encuentra el main correspondiente
+    resultado = subprocess.run(["python", "ESCRIBIR DIRECTORIO/Main DIIID.py"], capture_output=True, text=True)
     print(resultado.stdout)
 
 print("Simulación completada para variaciones de am.")
